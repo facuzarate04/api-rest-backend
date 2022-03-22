@@ -16,6 +16,7 @@ class TurnResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'client' => ClientResource::make($this->whenLoaded('client')),
             'date' => $this->date,
             'duration' => $this->duration,

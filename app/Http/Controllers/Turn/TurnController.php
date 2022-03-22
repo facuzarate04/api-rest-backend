@@ -25,7 +25,7 @@ class TurnController extends Controller
             ->when(request()->duration, function ($q) {
                 $q->where('duration', 'like', '%' . request()->duration . '%');
             })
-            ->get();
+            ->paginate(10);
         $turns = TurnResource::collection($turns);
         return response()->json($turns, 200);
     }
@@ -37,7 +37,14 @@ class TurnController extends Controller
      */
     public function create()
     {
-        //
+        try {
+            $turn = new Turn();
+            $turnService = new TurnService($turn);
+            $response = $turnService->create();
+            return response()->json($response, 200);
+        } catch (\Throwable $th) {
+            return response()->json([$th->getMessage()], 500);
+        }
     }
 
     /**
@@ -53,7 +60,7 @@ class TurnController extends Controller
             $turn = new Turn();
             $turnService = new TurnService($turn);
             $response = $turnService->store($data);
-            return response()->json($response, 200);
+            return response()->json($response, 201);
         } catch (\Throwable $th) {
             return response()->json([$th->getMessage()], 500);
         }
@@ -80,7 +87,14 @@ class TurnController extends Controller
      */
     public function edit(Turn $turn)
     {
-        //
+        try {
+            $turn->load('client');
+            $turnService = new TurnService($turn);
+            $response = $turnService->edit();
+            return response()->json($response, 200);
+        } catch (\Throwable $th) {
+            return response()->json([$th->getMessage()], 500);
+        }
     }
 
     /**

@@ -28,7 +28,7 @@ class StoreTurnRequest extends FormRequest
         return  [
             'client_id' => 'required|exists:users,id',
             'date' => 'required|date',
-            'duration' => 'nullable|date',
+            'duration' => 'nullable|numeric',
         ];
         
     }

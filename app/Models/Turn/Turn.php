@@ -3,6 +3,7 @@
 namespace App\Models\Turn;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,4 +23,17 @@ class Turn extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    //FORMAT ATTRIBUTES
+
+    public function getdateClientAttribute()
+    {
+        return Carbon::parse($this->date)->format('d-m-Y');
+    }
+
+    public function getMonthAttribute()
+    {
+        return Carbon::parse($this->date)->month;
+    }
+
 }

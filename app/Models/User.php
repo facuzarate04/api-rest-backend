@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_type_id'
     ];
 
     /**
@@ -55,4 +56,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(Turn::class, 'client_id');
     }
+    
 }

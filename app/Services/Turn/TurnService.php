@@ -3,6 +3,8 @@ namespace App\Services\Turn;
 
 use App\Http\Resources\Turn\TurnResource;
 use App\Models\Turn\Turn;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class TurnService {
 
@@ -10,6 +12,14 @@ class TurnService {
     public function __construct(Turn $turn)
     {
         $this->turn = $turn;
+    }
+
+    public function create()
+    {
+        $data = [
+            'canCreate' => true
+        ];
+        return $data;
     }
 
     public function store($data)
@@ -42,12 +52,47 @@ class TurnService {
         ];
     }
 
+    public function edit()
+    {
+        $allowedDates = $this->getAllowedDates();
+        $data = [
+            'turn' => TurnResource::make($this->turn),
+            'allowedDates' => $allowedDates
+        ];
+        return $data;
+    }
+
     public function destroy()
     {
         $this->turn->delete();
         return [
             'message' => 'Turn has been deleted sucessfully',
         ];
+    }
+
+    protected function getAllowedDates()
+    {
+        $turns = Turn::select('date')
+            ->whereMonth('date', $this->turn->month)
+            ->get();
+        $turnsDates = [];
+        foreach ($turns as $turn)
+        {
+            array_push($turnsDates, $turn->date);
+        }
+        $startDate = Carbon::parse($this->turn->month)->startOfMonth();
+        $endDate = Carbon::parse($this->turn->month)->endOfMonth();
+        $periodDates = CarbonPeriod::create($startDate, $endDate);
+        
+        $monthDates = [];
+        foreach($periodDates as $md)
+        {
+            array_push($monthDates, $md);
+        }
+
+        $dates = array_intersect($turnsDates, $monthDates);
+
+        return $dates;
     }
 
 }
